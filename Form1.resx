@@ -117,4 +117,27 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Hướng dẫn:
+ * Để thêm học sinh vào lớp:
+        - Chọn lớp phù hợp ở cột bên phải
+        - Điền thông tin vào các ô ID, Name, Email
+        - Nhấn vào nút Add để thêm.
+ * Để sử thông tin học sinh:
+        - Chọn lớp của học sinh cần sửa ở cột bên phải
+        - Chọn học sinh cần sửa
+        - Thay đổi thông tin học sinh ở các ô ID, Name, Email
+        - Nhấn vào nút Update để lưu lại
+ * Để xoá học sinh
+        - Chọn lớp của học sinh cần sửa ở cột bên phải
+        - Chọn học sinh cần xoá
+        - Nhấn bút Delete để xoá
+</value>
+  </data>
+  <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>25</value>
+  </metadata>
 </root>

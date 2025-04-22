@@ -22,84 +22,7 @@ namespace TranQuocThinh_BaiTap5
             listView1.SelectedIndexChanged += ListViewStudents_SelectedIndexChanged;
             treeView1.AfterSelect += TreeViewFaculties_AfterSelect;
         }
-        //private void InitializeComponent()
-        //{
-        //    // Initialize TreeView
-        //    treeViewFaculties = new TreeView
-        //    {
-        //        Location = new System.Drawing.Point(12, 12),
-        //        Size = new System.Drawing.Size(200, 400),
-        //        Name = "treeViewFaculties"
-        //    };
-        //    treeViewFaculties.AfterSelect += TreeViewFaculties_AfterSelect;
-
-        //    // Initialize DataGridView
-        //    dataGridViewStudents = new DataGridView
-        //    {
-        //        Location = new System.Drawing.Point(220, 12),
-        //        Size = new System.Drawing.Size(400, 200),
-        //        Name = "dataGridViewStudents",
-        //        AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-        //        SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-        //        MultiSelect = false
-        //    };
-        //    dataGridViewStudents.SelectionChanged += DataGridViewStudents_SelectionChanged;
-
-        //    // Initialize TextBoxes for student details
-        //    txtId = new TextBox
-        //    {
-        //        Location = new System.Drawing.Point(220, 220),
-        //        Size = new System.Drawing.Size(100, 20),
-        //        ReadOnly = true
-        //    };
-        //    txtName = new TextBox
-        //    {
-        //        Location = new System.Drawing.Point(220, 250),
-        //        Size = new System.Drawing.Size(200, 20),
-        //        ReadOnly = true
-        //    };
-        //    txtEmail = new TextBox
-        //    {
-        //        Location = new System.Drawing.Point(220, 280),
-        //        Size = new System.Drawing.Size(200, 20),
-        //        ReadOnly = true
-        //    };
-
-        //    // Add Labels
-        //    var lblId = new Label
-        //    {
-        //        Text = "ID",
-        //        Location = new System.Drawing.Point(180, 220),
-        //        Size = new System.Drawing.Size(30, 20)
-        //    };
-        //    var lblName = new Label
-        //    {
-        //        Text = "Name",
-        //        Location = new System.Drawing.Point(180, 250),
-        //        Size = new System.Drawing.Size(40, 20)
-        //    };
-        //    var lblEmail = new Label
-        //    {
-        //        Text = "Email",
-        //        Location = new System.Drawing.Point(180, 280),
-        //        Size = new System.Drawing.Size(40, 20)
-        //    };
-
-        //    // Add controls to form
-        //    Controls.Add(treeViewFaculties);
-        //    Controls.Add(dataGridViewStudents);
-        //    Controls.Add(txtId);
-        //    Controls.Add(txtName);
-        //    Controls.Add(txtEmail);
-        //    Controls.Add(lblId);
-        //    Controls.Add(lblName);
-        //    Controls.Add(lblEmail);
-
-        //    // Form properties
-        //    Text = "University Management";
-        //    Size = new System.Drawing.Size(650, 450);
-        //    StartPosition = FormStartPosition.CenterScreen;
-        //}
+        
 
         private void InitializeData()
         {
@@ -156,8 +79,12 @@ namespace TranQuocThinh_BaiTap5
 
         private void TreeViewFaculties_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            
+            btnDelete.Enabled = false;
+            btnSave.Enabled = false;
             if (e.Node.Tag is Lop selectedClass)
             {
+                btnAdd.Enabled = true;
                 // Clear existing items
                 listView1.Items.Clear();
 
@@ -174,10 +101,19 @@ namespace TranQuocThinh_BaiTap5
                 // Clear student details
                 ClearStudentDetails();
             }
+            else
+            {
+                btnAdd.Enabled = false;
+                ClearStudentDetails();
+                listView1.Items.Clear();
+            }
         }
 
         private void ListViewStudents_SelectedIndexChanged(object sender, EventArgs e)
         {
+            btnDelete.Enabled = true;
+            btnSave.Enabled = true;
+            btnAdd.Enabled = false;
             if (listView1.SelectedItems.Count > 0)
             {
                 var selectedStudent = (Student)listView1.SelectedItems[0].Tag;
@@ -198,15 +134,13 @@ namespace TranQuocThinh_BaiTap5
             txtEmail.Clear();
         }
 
-        private void btnEdit_Click(object sender, EventArgs e)
-        {
-            //txtID.Enabled = true;
-            txtName.Enabled = true;
-            txtEmail.Enabled = true;
-        }
+      
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            btnAdd.Enabled = false;
+            btnDelete.Enabled = false;
+            btnSave.Enabled = false;
             Student student = new Student(
                 txtID.Text == "" ? 0 : int.Parse(txtID.Text),
                 txtName.Text,
@@ -244,6 +178,64 @@ namespace TranQuocThinh_BaiTap5
             {
                 MessageBox.Show("Please select a student to delete.");
             }
+            btnAdd.Enabled = false;
+            btnDelete.Enabled = false;
+            btnSave.Enabled = false;
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra xem có lớp nào được chọn không
+            if (treeView1.SelectedNode?.Tag is Lop selectedClass)
+            {
+                // Kiểm tra dữ liệu đầu vào
+                if (string.IsNullOrWhiteSpace(txtID.Text) ||
+                    string.IsNullOrWhiteSpace(txtName.Text) ||
+                    string.IsNullOrWhiteSpace(txtEmail.Text))
+                {
+                    MessageBox.Show("Vui lòng điền đầy đủ thông tin sinh viên.");
+                    return;
+                }
+
+                // Kiểm tra ID có phải là số và là duy nhất
+                if (!int.TryParse(txtID.Text, out int newId))
+                {
+                    MessageBox.Show("Vui lòng nhập ID hợp lệ.");
+                    return;
+                }
+
+                // Kiểm tra ID đã tồn tại chưa
+                if (selectedClass.Students.Any(s => s.Id == newId))
+                {
+                    MessageBox.Show("ID sinh viên đã tồn tại.");
+                    return;
+                }
+
+                // Tạo sinh viên mới
+                var newStudent = new Student(newId, txtName.Text, txtEmail.Text);
+
+                // Thêm vào danh sách sinh viên của lớp
+                selectedClass.Students.Add(newStudent);
+
+                // Thêm vào ListView
+                var item = new ListViewItem(newStudent.Id.ToString());
+                item.SubItems.Add(newStudent.Name);
+                item.SubItems.Add(newStudent.Email);
+                item.Tag = newStudent;
+                listView1.Items.Add(item);
+
+                // Xóa các trường nhập liệu
+                ClearStudentDetails();
+
+                MessageBox.Show("Thêm sinh viên thành công!");
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một lớp trước.");
+            }
+            btnAdd.Enabled = false;
+            btnDelete.Enabled = false;
+            btnSave.Enabled = false;
         }
     }
 }
