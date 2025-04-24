@@ -13,54 +13,34 @@ namespace TranQuocThinh_BaiTap5
 {
     public partial class Form1 : Form
     {
-        private List<Khoa> khoas = new List<Khoa>();
+        public List<Khoa> khoas;
+        public List<Lop> lops;
+        public List<Student> students;
+        public CreateKhoa createKhoa;
+
         public Form1()
         {
             InitializeComponent();
-            InitializeData();
-            PopulateTreeView();
+            
+            
             listView1.SelectedIndexChanged += ListViewStudents_SelectedIndexChanged;
             treeView1.AfterSelect += TreeViewFaculties_AfterSelect;
+            khoas = new List<Khoa>();
+            lops = new List<Lop>();
+            students = new List<Student>();
+            createKhoa = new CreateKhoa();
+            InitializeData();
+            PopulateTreeView();
+
         }
         
 
         private void InitializeData()
         {
-            khoas = new List<Khoa>();
+            khoas = createKhoa.khoas;
+            lops = createKhoa.lops;
+            students = createKhoa.students;
 
-            // Create Faculty: Khoa CNTT Kinh doanh
-            var faculty1 = new Khoa( "Khoa CNTT Kinh doanh");
-            faculty1.Lops.Add(new Lop(111, "Class 111-22-2111"));
-            faculty1.Lops.Add(new Lop(112, "Class 111-22-2222"));
-
-            // Create Faculty: Khoa Kế toán
-            var faculty2 = new Khoa( "Khoa Kế toán");
-            faculty2.Lops.Add(new Lop(221, "class 222-33-111"));
-            faculty2.Lops.Add(new Lop(222, "class 222-33-222"));
-            faculty2.Lops.Add(new Lop(223, "class 222-33-333"));
-
-            // Add students to Class 111-22-2222
-            faculty1.Lops[0].Students.AddRange(new[]
-            {
-                new Student(105, "Full name #10", "email10@ueh.edu.vn"),
-                new Student(106, "Full name #11", "email11@ueh.edu.vn"),
-                new Student(107, "Full name #12", "email12@ueh.edu.vn"),
-                new Student(108, "Full name #13", "email13@ueh.edu.vn"),
-                new Student(109, "Full name #14", "email15@ueh.edu.vn")
-            });
-            // Add students to Class 111-22-2111
-            faculty1.Lops[1].Students.AddRange(new[]
-            {
-                new Student(105, "Full name #5", "email5@ueh.edu.vn"),
-                new Student(106, "Full name #6", "email6@ueh.edu.vn"),
-                new Student(107, "Full name #7", "email7@ueh.edu.vn"),
-                new Student(108, "Full name #8", "email8@ueh.edu.vn"),
-                new Student(109, "Full name #9", "email9@ueh.edu.vn")
-            });
-
-            // Add khoas to list
-            khoas.Add(faculty1);
-            khoas.Add(faculty2);
         }
         //phương thức hiện Khoa và lớp lên TreeView
         private void PopulateTreeView()  
@@ -151,9 +131,11 @@ namespace TranQuocThinh_BaiTap5
                 var selectedStudent = (Student)listView1.SelectedItems[0].Tag;
                 selectedStudent.Name = student.Name;
                 selectedStudent.Email = student.Email;
+                selectedStudent.Id = student.Id;
                 // Update ListView
                 listView1.SelectedItems[0].SubItems[1].Text = student.Name;
                 listView1.SelectedItems[0].SubItems[2].Text = student.Email;
+                listView1.SelectedItems[0].SubItems[0].Text = student.Id.ToString();
                 //refresh the ListView
                 listView1.Refresh();
 
@@ -208,6 +190,21 @@ namespace TranQuocThinh_BaiTap5
                 if (selectedClass.Students.Any(s => s.Id == newId))
                 {
                     MessageBox.Show("ID sinh viên đã tồn tại.");
+                    return;
+                }
+                try
+                {
+                    var regex = new System.Text.RegularExpressions.Regex(
+                        @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+                    if (!regex.IsMatch(txtEmail.Text))
+                    {
+                        MessageBox.Show("Vui lòng nhập email hợp lệ.");
+                        return;
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Vui lòng nhập email hợp lệ.");
                     return;
                 }
 
